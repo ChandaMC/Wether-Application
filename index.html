@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Application</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Weather Application</h1>
+        <form id="weather-form">
+            <label for="city"></label><input type="text" id="city" placeholder="Enter City" required>
+            <label for="country"></label><input type="text" id="country" placeholder="Enter Country Code (e.g. US)" required>
+            <button type="submit">Get Weather</button>
+        </form>
+
+        <div id="weather-result"></div>
+    </div>
+
+    <script>
+        document.getElementById('weather-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            let city = document.getElementById('city').value;
+            let country = document.getElementById('country').value;
+
+            fetch(`weather.php?city=${city}&country=${country}`)
+                .then(response => response.json())
+                .then(data => {
+                    let resultDiv = document.getElementById('weather-result');
+
+                    if (data.error) {
+                        resultDiv.innerHTML = `<p>${data.error}</p>`;
+                    } else {
+                        let current = data.current;
+                        let forecast = data.forecast;
+
+                        resultDiv.innerHTML = `
+                            <h2>Current Weather in ${current.city_name}, ${current.country_code}</h2>
+                            <p>Temperature: ${current.temp}°C</p>
+                            <p>Feels Like: ${current.app_temp}°C</p>
+                            <p>Weather: ${current.weather.description}</p>
+                            <p>Wind Speed: ${current.wind_spd} m/s</p>
+                            <p>Humidity: ${current.rh}%</p>
+                            <h3>16-Day Forecast:</h3>
+                        `;
+
+                        forecast.forEach(day => {
+                            resultDiv.innerHTML += `
+                                <p>Date: ${day.datetime}</p>
+                                <p>Max Temp: ${day.max_temp}°C, Min Temp: ${day.min_temp}°C</p>
+                                <p>Weather: ${day.weather.description}</p>
+                                <hr>
+                            `;
+                        });
+                    }
+                })
+                .catch(error => console.error("Error fetching weather data:", error));
+        });
+    </script>
+</body>
+</html>
