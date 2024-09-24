@@ -1,6 +1,7 @@
 <?php
 // Weatherbit API key
-$apiKey = "YOUR_API_KEY_HERE";
+
+$apiKey = "e4e6ec8f0ec547bfb6bdfc4b533f0d25";
 $city = $_GET['city'];
 $country = $_GET['country'];
 
