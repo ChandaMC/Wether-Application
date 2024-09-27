@@ -11,7 +11,6 @@ if (!$city || !$country) {
 $currentWeatherUrl = "https://api.weatherbit.io/v2.0/current?city={$city}&country={$country}&key={$apiKey}";
 $forecastUrl = "https://api.weatherbit.io/v2.0/forecast/daily?city={$city}&country={$country}&key={$apiKey}";
 
-// Fetch current weather
 $currentWeather = @file_get_contents($currentWeatherUrl);
 $forecastWeather = @file_get_contents($forecastUrl);
 
@@ -20,16 +19,16 @@ if ($currentWeather === FALSE || $forecastWeather === FALSE) {
     exit();
 }
 
-// Decode the API response
 $currentData = json_decode($currentWeather, true);
 $forecastData = json_decode($forecastWeather, true);
 
 if (isset($currentData['data']) && isset($forecastData['data'])) {
     $weatherData = [
         "current" => $currentData['data'][0],
-        "forecast" => $forecastData['data']
+        "forecast" => $forecastData['data']  // 16-day forecast data
     ];
     echo json_encode($weatherData);
 } else {
     echo json_encode(["error" => "Invalid API response."]);
 }
+?>

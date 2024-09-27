@@ -45,7 +45,9 @@
                         resultDiv.innerHTML = `<p>${data.error}</p>`;
                     } else {
                         let current = data.current;
+                        let forecast = data.forecast;
 
+                        // Display current weather data
                         resultDiv.innerHTML = `
                             <h2>Current Weather in ${current.city_name}, ${current.country_code}</h2>
                             <p>Temperature: ${current.temp}°C</p>
@@ -55,7 +57,24 @@
                             <p>Humidity: ${current.rh}%</p>
                             <p>Air Quality Index: ${current.aqi}</p>
                             <p>Observation Time: ${current.ob_time}</p>
+                            <h3>16-Day Forecast:</h3>
                         `;
+
+                        // Loop through forecast data and display it
+                        forecast.forEach(day => {
+                            resultDiv.innerHTML += `
+                                <div class="forecast-day">
+                                    <p>Date: ${day.datetime}</p>
+                                    <p>Max Temp: ${day.max_temp}°C</p>
+                                    <p>Min Temp: ${day.min_temp}°C</p>
+                                    <p>Weather: ${day.weather.description}</p>
+                                    <p>Precipitation: ${day.precip} mm</p>
+                                    <p>UV Index: ${day.uv}</p>
+                                    <p>Wind: ${day.wind_spd} m/s from ${day.wind_cdir_full}</p>
+                                    <hr>
+                                </div>
+                            `;
+                        });
                     }
                 })
                 .catch(error => {

@@ -34,3 +34,10 @@ button {
 hr {
     border: 1px solid #ddd;
 }
+
+.forecast-day {
+    background-color: #f4f4f4;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
