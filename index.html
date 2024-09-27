@@ -18,25 +18,64 @@
             <button type="submit">Get Weather</button>
         </form>
 
-        <div id="weather-result"></div>
-        <div id="loading" style="display:none;">Loading...</div>
+        <!-- Flex container to hold both weather result and search history side by side -->
+        <div class="flex-container">
+            <!-- Weather result section -->
+            <div id="weather-result-container">
+                <div id="weather-result"></div>
+                <div id="loading" style="display:none;">Loading...</div>
+            </div>
+
+            <!-- Separate div for search history -->
+            <div class="history-container">
+                <h3>Search History</h3>
+                <ul id="search-history"></ul>
+            </div>
+        </div>
     </div>
 
     <script>
-        document.getElementById('weather-form').addEventListener('submit', function (e) {
-            e.preventDefault();
+        // Function to save search history in localStorage
+        function saveSearchHistory(city, country) {
+            let searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+            searchHistory.unshift({ city, country });
 
-            let city = document.getElementById('city').value;
-            let country = document.getElementById('country').value;
+            // Limit to the last 5 searches
+            if (searchHistory.length > 5) {
+                searchHistory.pop();
+            }
 
-            // Show the loading message
+            localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+            displaySearchHistory();
+        }
+
+        // Function to display search history
+        function displaySearchHistory() {
+            let searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
+            let searchHistoryList = document.getElementById('search-history');
+
+            searchHistoryList.innerHTML = '';
+
+            searchHistory.forEach(search => {
+                let listItem = document.createElement('li');
+                listItem.textContent = `${search.city}, ${search.country}`;
+                listItem.addEventListener('click', () => {
+                    document.getElementById('city').value = search.city;
+                    document.getElementById('country').value = search.country;
+                    fetchWeather(search.city, search.country);
+                });
+                searchHistoryList.appendChild(listItem);
+            });
+        }
+
+        // Function to fetch weather data
+        function fetchWeather(city, country) {
             document.getElementById('loading').style.display = 'block';
             document.getElementById('weather-result').innerHTML = '';
 
             fetch(`weather.php?city=${city}&country=${country}`)
                 .then(response => response.json())
                 .then(data => {
-                    // Hide the loading message
                     document.getElementById('loading').style.display = 'none';
 
                     let resultDiv = document.getElementById('weather-result');
@@ -47,7 +86,6 @@
                         let current = data.current;
                         let forecast = data.forecast;
 
-                        // Display current weather data
                         resultDiv.innerHTML = `
                             <h2>Current Weather in ${current.city_name}, ${current.country_code}</h2>
                             <p>Temperature: ${current.temp}°C</p>
@@ -60,7 +98,6 @@
                             <h3>16-Day Forecast:</h3>
                         `;
 
-                        // Loop through forecast data and display it
                         forecast.forEach(day => {
                             resultDiv.innerHTML += `
                                 <div class="forecast-day">
@@ -75,6 +112,9 @@
                                 </div>
                             `;
                         });
+
+                        // Save the search to history
+                        saveSearchHistory(city, country);
                     }
                 })
                 .catch(error => {
@@ -82,7 +122,18 @@
                     document.getElementById('weather-result').innerHTML = `<p>Error fetching weather data. Please try again later.</p>`;
                     console.error("Error fetching weather data:", error);
                 });
+        }
+
+        // Add event listener for form submission
+        document.getElementById('weather-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            let city = document.getElementById('city').value;
+            let country = document.getElementById('country').value;
+            fetchWeather(city, country);
         });
+
+        // Display the search history when the page loads
+        displaySearchHistory();
     </script>
 </body>
 </html>

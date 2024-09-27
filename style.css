@@ -41,3 +41,44 @@ hr {
     margin-bottom: 10px;
     border-radius: 5px;
 }
+
+/* Flex container to hold the two sections side by side */
+.flex-container {
+    display: flex;
+    justify-content: space-between; /* Adjust space between the two sections */
+    align-items: flex-start; /* Align items to the top */
+    margin-top: 20px;
+}
+
+/* Weather result container */
+#weather-result-container {
+    flex: 3; /* Take 3/4th of the space */
+    margin-right: 20px; /* Add some space between the two sections */
+}
+
+/* Search history container */
+.history-container {
+    flex: 1; /* Take 1/4th of the space */
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+#search-history {
+    list-style-type: none;
+    padding: 0;
+}
+
+#search-history li {
+    cursor: pointer;
+    padding: 5px;
+    margin: 5px 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+#search-history li:hover {
+    background-color: #eee;
+}
