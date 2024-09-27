@@ -10,12 +10,16 @@
     <div class="container">
         <h1>Weather Application</h1>
         <form id="weather-form">
-            <label for="city"></label><input type="text" id="city" placeholder="Enter City" required>
-            <label for="country"></label><input type="text" id="country" placeholder="Enter Country Code (e.g. US)" required>
+            <label for="city">City:</label>
+            <input type="text" id="city" placeholder="Enter City" required>
+
+            <label for="country">Country Code:</label>
+            <input type="text" id="country" placeholder="Enter Country Code (e.g. ZM)" required>
             <button type="submit">Get Weather</button>
         </form>
 
         <div id="weather-result"></div>
+        <div id="loading" style="display:none;">Loading...</div>
     </div>
 
     <script>
@@ -25,16 +29,22 @@
             let city = document.getElementById('city').value;
             let country = document.getElementById('country').value;
 
+            // Show the loading message
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('weather-result').innerHTML = '';
+
             fetch(`weather.php?city=${city}&country=${country}`)
                 .then(response => response.json())
                 .then(data => {
+                    // Hide the loading message
+                    document.getElementById('loading').style.display = 'none';
+
                     let resultDiv = document.getElementById('weather-result');
 
                     if (data.error) {
                         resultDiv.innerHTML = `<p>${data.error}</p>`;
                     } else {
                         let current = data.current;
-                        let forecast = data.forecast;
 
                         resultDiv.innerHTML = `
                             <h2>Current Weather in ${current.city_name}, ${current.country_code}</h2>
@@ -43,20 +53,16 @@
                             <p>Weather: ${current.weather.description}</p>
                             <p>Wind Speed: ${current.wind_spd} m/s</p>
                             <p>Humidity: ${current.rh}%</p>
-                            <h3>16-Day Forecast:</h3>
+                            <p>Air Quality Index: ${current.aqi}</p>
+                            <p>Observation Time: ${current.ob_time}</p>
                         `;
-
-                        forecast.forEach(day => {
-                            resultDiv.innerHTML += `
-                                <p>Date: ${day.datetime}</p>
-                                <p>Max Temp: ${day.max_temp}°C, Min Temp: ${day.min_temp}°C</p>
-                                <p>Weather: ${day.weather.description}</p>
-                                <hr>
-                            `;
-                        });
                     }
                 })
-                .catch(error => console.error("Error fetching weather data:", error));
+                .catch(error => {
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('weather-result').innerHTML = `<p>Error fetching weather data. Please try again later.</p>`;
+                    console.error("Error fetching weather data:", error);
+                });
         });
     </script>
 </body>
