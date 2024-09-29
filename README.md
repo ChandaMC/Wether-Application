@@ -63,7 +63,7 @@ $apiKey = "YOUR_API_KEY"; // Replace with your Weatherbit API key
 5. You can also clear the input fields and the search history using the **Clear** buttons.
 
 ## API Key Setup
-To use the Weatherbit API, you'll need to sign up and get your API key [here](https://www.weatherbit.io/account/create).
+To use the Weatherbit API, you'll need to sign up and get your API key: [here](https://www.weatherbit.io/account/create).
 
 After obtaining the API key, insert it into the `weather.php` file:
 
@@ -73,7 +73,7 @@ $apiKey = 'YOUR_API_KEY'; // Replace with your Weatherbit API key
 
 ## Live Demo
 You can check the web app in action here:
-- Click here to check out a Live Demo [https://weatherbit-weather-app.ttiny.io/](https://weatherbit-weather-app.tiiny.io/).
+- Click here to check out a Live Demo: [https://weatherbit-weather-app.ttiny.io/](https://weatherbit-weather-app.tiiny.io/).
 
 ## Folder Structure
 ```bash
