@@ -9,16 +9,54 @@
 <body>
     <div class="container">
         <h1>Weather Application</h1>
-        <form id="weather-form">
-            <label for="city">City:</label>
-            <input type="text" id="city" placeholder="Enter City" required>
 
-            <label for="country">Country Code:</label>
-            <input type="text" id="country" placeholder="Enter Country Code (e.g. ZM)" required>
-            <button type="submit">Get Weather</button>
+        <!--        <form id="weather-form">-->
+        <!--            <div class="input-group">-->
+        <!--                <label for="city">City:</label>-->
+        <!--                <input type="text" id="city" placeholder="Enter City" required>-->
+        <!--            </div>-->
+        <!--            <div class="input-group">-->
+        <!--                <label for="country">Country Code:</label>-->
+        <!--                <input type="text" id="country" placeholder="Enter Country Code (e.g. ZM)" required>-->
+        <!--            </div>-->
+        <!--            <button type="submit">Get Weather</button>-->
+        <!--            <button type="submit" style="align-self: flex-start; margin-top: 10px;">Get Weather</button>-->
+
+        <!--        </form>-->
+
+        <form id="weather-form">
+            <div class="input-group">
+                <label for="city">City:</label>
+                <input type="text" id="city" placeholder="Enter City" required>
+            </div>
+
+            <div class="input-group">
+                <label for="country">Country Code:</label>
+                <input type="text" id="country" placeholder="Enter Country Code (e.g. ZM)" required>
+            </div>
+
+            <div style="text-align: right;">
+                <button type="submit" id="get-weather" class="action-button">Get Weather</button>
+                <button type="button" id="clear-button" class="action-button">Clear</button>
+            </div>
+
+            <script>
+                document.getElementById('clear-button').addEventListener('click',
+                    function () {
+                        document.getElementById('city').value = '';
+                        document.getElementById('country').value = '';
+                        });
+            </script>
         </form>
 
-        <!-- Flex container to hold both weather result and search history side by side -->
+<!--        <script>-->
+<!--            document.getElementById('clear-button').addEventListener('click', function () {-->
+<!--                document.getElementById('city').value = '';-->
+<!--                document.getElementById('country').value = '';-->
+<!--            });-->
+<!--        </script>-->
+<!--        -->
+        <br>
         <div class="flex-container">
             <!-- Weather result section -->
             <div id="weather-result-container">
@@ -26,19 +64,30 @@
                 <div id="loading" style="display:none;">Loading...</div>
             </div>
 
-            <!-- Separate div for search history -->
+            <!-- Search history section with clear button -->
             <div class="history-container">
                 <h3>Search History</h3>
                 <ul id="search-history"></ul>
+                <button id="clear-history"
+                    style="
+                        display:none;
+                        margin-left: 180px;
+                        padding: 10px 20px;
+                        width: 80px;  /* Adjust width */
+                        height: 30px;  /* Adjust height */
+                    ">Clear</button>
             </div>
         </div>
     </div>
 
-    <script>
+       <script>
         // Function to save search history in localStorage
         function saveSearchHistory(city, country) {
             let searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
-            searchHistory.unshift({ city, country });
+            // Prevent duplicate entries in the search history
+            if (!searchHistory.some(search => search.city === city && search.country === country)) {
+                searchHistory.unshift({ city, country });
+            }
 
             // Limit to the last 5 searches
             if (searchHistory.length > 5) {
@@ -53,8 +102,15 @@
         function displaySearchHistory() {
             let searchHistory = JSON.parse(localStorage.getItem('searchHistory')) || [];
             let searchHistoryList = document.getElementById('search-history');
+            let clearButton = document.getElementById('clear-history');
 
-            searchHistoryList.innerHTML = '';
+            searchHistoryList.innerHTML = ''; // Clear previous history
+
+            if (searchHistory.length > 0) {
+                clearButton.style.display = 'block'; // Show clear button when history exists
+            } else {
+                clearButton.style.display = 'none'; // Hide clear button when there's no history
+            }
 
             searchHistory.forEach(search => {
                 let listItem = document.createElement('li');
@@ -68,63 +124,79 @@
             });
         }
 
-        // Function to fetch weather data
+        // Function to clear search history
+        function clearSearchHistory() {
+            localStorage.removeItem('searchHistory'); // Clear from localStorage
+            displaySearchHistory(); // Refresh the display
+        }
+
+        // Function to fetch weather data (with caching)
         function fetchWeather(city, country) {
             document.getElementById('loading').style.display = 'block';
             document.getElementById('weather-result').innerHTML = '';
 
             fetch(`weather.php?city=${city}&country=${country}`)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     document.getElementById('loading').style.display = 'none';
 
-                    let resultDiv = document.getElementById('weather-result');
-
                     if (data.error) {
-                        resultDiv.innerHTML = `<p>${data.error}</p>`;
+                        document.getElementById('weather-result').innerHTML = `<p>City not found. Please try again with a valid city and country code.</p>`;
                     } else {
-                        let current = data.current;
-                        let forecast = data.forecast;
-
-                        resultDiv.innerHTML = `
-                            <h2>Current Weather in ${current.city_name}, ${current.country_code}</h2>
-                            <p>Temperature: ${current.temp}°C</p>
-                            <p>Feels Like: ${current.app_temp}°C</p>
-                            <p>Weather: ${current.weather.description}</p>
-                            <p>Wind Speed: ${current.wind_spd} m/s</p>
-                            <p>Humidity: ${current.rh}%</p>
-                            <p>Air Quality Index: ${current.aqi}</p>
-                            <p>Observation Time: ${current.ob_time}</p>
-                            <h3>16-Day Forecast:</h3>
-                        `;
-
-                        forecast.forEach(day => {
-                            resultDiv.innerHTML += `
-                                <div class="forecast-day">
-                                    <p>Date: ${day.datetime}</p>
-                                    <p>Max Temp: ${day.max_temp}°C</p>
-                                    <p>Min Temp: ${day.min_temp}°C</p>
-                                    <p>Weather: ${day.weather.description}</p>
-                                    <p>Precipitation: ${day.precip} mm</p>
-                                    <p>UV Index: ${day.uv}</p>
-                                    <p>Wind: ${day.wind_spd} m/s from ${day.wind_cdir_full}</p>
-                                    <hr>
-                                </div>
-                            `;
-                        });
-
-                        // Save the search to history
-                        saveSearchHistory(city, country);
+                        displayWeather(data);
+                        saveSearchHistory(city, country); // Save the search to history
                     }
                 })
                 .catch(error => {
                     document.getElementById('loading').style.display = 'none';
-                    document.getElementById('weather-result').innerHTML = `<p>Error fetching weather data. Please try again later.</p>`;
+                    document.getElementById('weather-result').innerHTML = `<p>Error fetching weather data. Please check your internet connection or try again later.</p>`;
                     console.error("Error fetching weather data:", error);
                 });
         }
 
-        // Add event listener for form submission
+        // Function to display weather data (current weather + 16-day forecast)
+        function displayWeather(data) {
+            let resultDiv = document.getElementById('weather-result');
+            let current = data.current;
+            let forecast = data.forecast;
+
+            resultDiv.innerHTML = `
+                <h2>Current Weather in ${current.city_name}, ${current.country_code}</h2>
+                <img src="https://www.weatherbit.io/static/img/icons/${current.weather.icon}.png" alt="${current.weather.description}">
+                <p>Temperature: ${current.temp}°C</p>
+                <p>Feels Like: ${current.app_temp}°C</p>
+                <p>Weather: ${current.weather.description}</p>
+                <p>Wind Speed: ${current.wind_spd} m/s</p>
+                <p>Humidity: ${current.rh}%</p>
+                <p>Air Quality Index: ${current.aqi}</p>
+                <p>Observation Time: ${current.ob_time}</p>
+                <h3>16-Day Forecast:</h3>
+            `;
+
+            // Loop through forecast data and display it with icons
+            forecast.forEach(day => {
+                resultDiv.innerHTML += `
+                    <div class="forecast-day">
+                        <p>Date: ${day.datetime}</p>
+                        <img src="https://www.weatherbit.io/static/img/icons/${day.weather.icon}.png" alt="${day.weather.description}">
+                        <p>Max Temp: ${day.max_temp}°C</p>
+                        <p>Min Temp: ${day.min_temp}°C</p>
+                        <p>Weather: ${day.weather.description}</p>
+                        <p>Precipitation: ${day.precip} mm</p>
+                        <p>UV Index: ${day.uv}</p>
+                        <p>Wind: ${day.wind_spd} m/s from ${day.wind_cdir_full}</p>
+                        <hr>
+                    </div>
+                `;
+            });
+        }
+
+        // Event listener for form submission
         document.getElementById('weather-form').addEventListener('submit', function (e) {
             e.preventDefault();
             let city = document.getElementById('city').value;
@@ -132,8 +204,122 @@
             fetchWeather(city, country);
         });
 
+        // Event listener for clearing search history
+        document.getElementById('clear-history').addEventListener('click', clearSearchHistory);
+
         // Display the search history when the page loads
         displaySearchHistory();
     </script>
+    <script>
+            // Function to save weather data to localStorage with a timestamp
+            function saveToCache(city, data) {
+                const cacheData = {
+                    data,
+                    timestamp: Date.now()  // Store the current time
+                };
+                localStorage.setItem(city, JSON.stringify(cacheData));
+            }
+
+            // Function to get weather data from localStorage
+            function getFromCache(city) {
+                const cacheData = JSON.parse(localStorage.getItem(city));
+
+                // Check if data exists and if it's not older than 10 minutes (600000 ms)
+                if (cacheData && (Date.now() - cacheData.timestamp < 600000)) {
+                    return cacheData.data;
+                }
+                return null; // Return null if no valid cache data exists
+            }
+
+            // Function to fetch weather data (with caching)
+            function fetchWeather(city, country) {
+                // Check the cache first
+                const cachedData = getFromCache(city);
+                if (cachedData) {
+                    displayWeather(cachedData); // Use cached data if available
+                    return;
+                }
+
+                document.getElementById('loading').style.display = 'block';
+                document.getElementById('weather-result').innerHTML = '';
+
+                fetch(`weather.php?city=${city}&country=${country}`)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        document.getElementById('loading').style.display = 'none';
+
+                        if (data.error) {
+                            document.getElementById('weather-result').innerHTML = `<p>City not found. Please try again with a valid city and country code.</p>`;
+                        } else {
+                            displayWeather(data);
+                            saveToCache(city, data); // Save the data to cache
+                            saveSearchHistory(city, country); // Save the search to history
+                        }
+                    })
+                    .catch(error => {
+                        document.getElementById('loading').style.display = 'none';
+                        document.getElementById('weather-result').innerHTML = `<p>Error fetching weather data. Please check your internet connection or try again later.</p>`;
+                        console.error("Error fetching weather data:", error);
+                    });
+            }
+
+            // Function to display weather data (current weather + 16-day forecast)
+            function displayWeather(data) {
+                let resultDiv = document.getElementById('weather-result');
+                let current = data.current;
+                let forecast = data.forecast;
+
+                resultDiv.innerHTML = `
+                    <h2>Current Weather in ${current.city_name}, ${current.country_code}</h2>
+                    <img src="https://www.weatherbit.io/static/img/icons/${current.weather.icon}.png" alt="${current.weather.description}">
+                    <p>Temperature: ${current.temp}°C</p>
+                    <p>Feels Like: ${current.app_temp}°C</p>
+                    <p>Weather: ${current.weather.description}</p>
+                    <p>Wind Speed: ${current.wind_spd} m/s</p>
+                    <p>Humidity: ${current.rh}%</p>
+                    <p>Air Quality Index: ${current.aqi}</p>
+                    <p>Observation Time: ${current.ob_time}</p>
+                    <h3>16-Day Forecast:</h3>
+                `;
+
+                // Loop through forecast data and display it with icons
+                forecast.forEach(day => {
+                    resultDiv.innerHTML += `
+                        <div class="forecast-day">
+                            <p>Date: ${day.datetime}</p>
+                            <img src="https://www.weatherbit.io/static/img/icons/${day.weather.icon}.png" alt="${day.weather.description}">
+                            <p>Max Temp: ${day.max_temp}°C</p>
+                            <p>Min Temp: ${day.min_temp}°C</p>
+                            <p>Weather: ${day.weather.description}</p>
+                            <p>Precipitation: ${day.precip} mm</p>
+                            <p>UV Index: ${day.uv}</p>
+                            <p>Wind: ${day.wind_spd} m/s from ${day.wind_cdir_full}</p>
+                            <hr>
+                        </div>
+                    `;
+                });
+            }
+
+            // Event listener for form submission
+            document.getElementById('weather-form').addEventListener('submit', function (e) {
+                e.preventDefault();
+                let city = document.getElementById('city').value;
+                let country = document.getElementById('country').value;
+                fetchWeather(city, country);
+            });
+
+            // Event listener for clearing search history
+            document.getElementById('clear-history').addEventListener('click', clearSearchHistory);
+
+            // Display the search history when the page loads
+            displaySearchHistory();
+        </script>
+
+
 </body>
 </html>
