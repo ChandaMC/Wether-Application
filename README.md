@@ -73,7 +73,7 @@ $apiKey = 'YOUR_API_KEY'; // Replace with your Weatherbit API key
 
 ## Live Demo
 You can check the web app in action here:
-- Click here to check out a Live Demo [here](https://weatherbit-weather-app.tiiny.io/).
+- Click here to check out a Live Demo [https://weatherbit-weather-app.ttiny.io/](https://weatherbit-weather-app.tiiny.io/).
 
 ## Folder Structure
 ```bash
