@@ -4,7 +4,7 @@ body {
     background-color: #f0f4f8;
     color: #333;
     margin: 0;
-    padding: 20px;
+    padding: 0;
 }
 
 h1 {
@@ -17,14 +17,77 @@ h1 {
 .container {
     max-width: 1200px;
     margin: 0 auto;
+    padding: 20px;
 }
 
-label {
+/* Header styling */
+.header {
+    background-color: #2c3e50;
+    padding: 0.5px 0; /* Drastically reduced padding */
+    width: 100%;
+    height: auto;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05); /* Reduced box shadow */
+}
+
+.header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo h1 {
+    color: #ecf0f1;
+    font-size: 0.7rem; /* Further reduced font size */
+    margin: 0;
     font-weight: bold;
-    margin-bottom: 5px;
-    display: block;
 }
 
+.navbar {
+    display: flex;
+}
+
+.navbar ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar ul li {
+    margin-left: 3px; /* Further reduced margin */
+}
+
+.navbar ul li a {
+    color: #ecf0f1;
+    text-decoration: none;
+    padding: 2px 4px; /* Reduced padding further */
+    font-size: 0.6rem; /* Further reduced font size */
+    transition: background-color 0.3s;
+    border-radius: 3px;
+}
+
+.navbar ul li a:hover, .navbar ul li a.active {
+    background-color: #3498db;
+    color: white;
+}
+
+/* Mobile navigation toggle */
+.mobile-nav-toggle {
+    display: none;
+    color: #ecf0f1;
+    font-size: 1rem; /* Further reduced size */
+    cursor: pointer;
+}
+
+/* Adjust content below header */
+.container {
+    margin-top: 20px; /* Further reduced margin */
+}
+
+/* Input Fields */
 .input-group {
     margin-bottom: 15px;
 }
@@ -39,24 +102,23 @@ input {
 
 /* Button styling */
 .action-button {
-    padding: 10px 15px;
-    width: 150px; /* Fixed width for both buttons */
+    padding: 4px 6px; /* Further reduced padding */
+    width: 100px; /* Further reduced button width */
     border: none;
     border-radius: 5px;
     font-size: 1rem;
     cursor: pointer;
     color: white;
     transition: background-color 0.3s;
-    margin-left: 10px;
+    margin-left: 8px;
 }
 
 .action-button:first-child {
-    margin-left: 0; /* Remove margin from the first button */
+    margin-left: 0;
 }
 
-/* Specific button colors */
 #get-weather {
-    background-color: #2ecc71; /* Green */
+    background-color: #2ecc71;
 }
 
 #get-weather:hover {
@@ -64,7 +126,7 @@ input {
 }
 
 #clear-button {
-    background-color: #e74c3c; /* Red */
+    background-color: #e74c3c;
 }
 
 #clear-button:hover {
@@ -79,36 +141,12 @@ input {
     gap: 20px;
 }
 
-/* Weather result container */
 #weather-result-container {
     flex: 3;
     background-color: #fff;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-#weather-result img {
-    display: block;
-    margin-bottom: 10px;
-}
-
-/* Forecast day styling */
-.forecast-day {
-    background-color: #f1f1f1;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 10px;
-}
-
-.forecast-day img {
-    width: 40px;
-    height: 40px;
-}
-
-.forecast-day p {
-    margin: 0;
-    font-size: 1rem;
 }
 
 /* Search history styling */
@@ -148,11 +186,11 @@ ul#search-history li:hover {
     background-color: #e74c3c;
     border: none;
     color: white;
-    padding: 10px 15px;
+    padding: 6px 8px; /* Further reduced padding */
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s;
-    width: 150px; /* Match the width of action buttons */
+    width: 100px; /* Further reduced button width */
 }
 
 #clear-history:hover {
@@ -163,10 +201,10 @@ ul#search-history li:hover {
 #loading {
     display: none;
     margin: 20px auto;
-    width: 50px;
-    height: 50px;
-    border: 6px solid #f3f3f3;
-    border-top: 6px solid #3498db;
+    width: 30px; /* Further reduced size */
+    height: 30px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
@@ -187,10 +225,33 @@ ul#search-history li:hover {
     }
 
     .action-button, #clear-history {
-        width: 100%; /* Full width on smaller screens */
+        width: 100%;
     }
 
     .action-button {
-        margin-bottom: 10px; /* Space between buttons on mobile */
+        margin-bottom: 10px;
+    }
+
+    /* Mobile navigation adjustments */
+    .navbar ul {
+        flex-direction: column;
+        display: none;
+        background-color: #34495e;
+        width: 100%;
+        position: absolute;
+        top: 60px;
+        left: 0;
+    }
+
+    .navbar ul.show {
+        display: flex;
+    }
+
+    .navbar ul li {
+        margin: 10px 0;
+    }
+
+    .mobile-nav-toggle {
+        display: block;
     }
 }

@@ -5,17 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather Application</title>
     <link rel="stylesheet" href="style.css">
-    <!-- Lottie Player for Loading Animation -->
-<!--    <script src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs" type="module"></script>-->
 </head>
+
 <body>
+    <!-- Header Section -->
+    <header id="header" class="header d-flex align-items-center">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a href="index.html" class="logo">
+                <h1 style="font-size: 20px">Weather App</h1>
+            </a>
+            <nav id="navbar" class="navbar">
+                <ul>
+                    <li><a href="index.html" class="nav-link active" style="font-size: 18px"><i>Home</i></a></li>
+                    <li><a href="https://chanda-m-chimfwembe.netlify.app/" target="_blank" class="nav-link" style="font-size: 18px"><i>Portfolio</i></a></li>
+                    <li><a href="assets/Resume/Resume%20main.pdf" download class="nav-link" style="font-size: 18px"><i>Download-Resume</i></a></li>
+                    <li><a href="https://www.weatherbit.io/" target="_blank" class="nav-link" style="font-size: 18px"><i>Weatherbit</i></a></li>
+                </ul>
+                <i class="bi bi-list mobile-nav-toggle"></i>
+            </nav>
+        </div>
+    </header>
+
     <div class="container">
-        <h1>Weather Application</h1>
+        <br>
+        <br>
+        <br>
+        <h2><i>Input Field</i></h2>
 
         <form id="weather-form">
             <div class="input-group">
                 <label for="city">City:</label>
-                <input type="text" id="city" placeholder="Enter City" required>
+                <input type="text" id="city" placeholder="Enter City (e.g. Lusaka)" required>
             </div>
 
             <div class="input-group">
@@ -24,7 +44,7 @@
             </div>
 
             <div style="text-align: right;">
-                <button type="submit" id="get-weather" class="action-button">Get Weather</button>
+                <button type="submit" id="get-weather" class="action-button">Submit</button>
                 <button type="button" id="clear-button" class="action-button">Clear</button>
             </div>
 
